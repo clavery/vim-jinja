@@ -24,11 +24,11 @@ if exists("*GetJinjaIndent")
   finish
 endif
 
-let b:tagstart = '.*' . '{%[+-]\=\s*'
-let b:tagend = '.*-\=%}' . '.*'
+let s:tagstart = '.*' . '{%[+-]\=\s*'
+let s:tagend = '.*-\=%}' . '.*'
 
-let b:blocktags = '\(block\|for\|if\|with\|autoescape\|filter\|trans\|macro\|set\)'
-let b:midtags = '\(else\|elif\|pluralize\)'
+let s:blocktags = '\(block\|for\|if\|with\|autoescape\|filter\|trans\|macro\|set\)'
+let s:midtags = '\(else\|elif\|pluralize\)'
 
 
 function! s:IndentLevel(lnum)
@@ -38,14 +38,14 @@ endfunction
 function! s:GetMatchingStartTagLevel(lnum)
   let curline = getline(a:lnum)
 
-  let start_tag_check = matchlist(curline, b:tagstart . '\(end' . b:blocktags . '\)' . b:tagend)
+  let start_tag_check = matchlist(curline, s:tagstart . '\(end' . s:blocktags . '\)' . s:tagend)
 
   if empty(start_tag_check)
     " possible midtag
-    let is_midtag  = curline =~# b:tagstart . b:midtags . b:tagend
+    let is_midtag  = curline =~# s:tagstart . s:midtags . s:tagend
 
     if is_midtag
-      let mid_tag_check = matchlist(curline, b:tagstart . b:midtags . b:tagend)
+      let mid_tag_check = matchlist(curline, s:tagstart . s:midtags . s:tagend)
       if mid_tag_check[1] == 'pluralize'
         let start_tag = 'trans'
         let end_tag = 'endtrans'
@@ -67,8 +67,8 @@ function! s:GetMatchingStartTagLevel(lnum)
   while tlnum >= 0
     let ptb = getline(tlnum)
 
-    let end_tag_found   = ptb =~# b:tagstart . end_tag . b:tagend
-    let start_tag_found   = ptb =~# b:tagstart . start_tag . b:tagend
+    let end_tag_found   = ptb =~# s:tagstart . end_tag . s:tagend
+    let start_tag_found   = ptb =~# s:tagstart . start_tag . s:tagend
 
     if end_tag_found && start_tag_found
       let start_tag_found = 0
@@ -102,13 +102,13 @@ function! GetJinjaIndent(...)
   let pnb = getline(lnum)
   let cur = getline(v:lnum)
 
-  let pnb_blockstart = pnb =~# b:tagstart . b:blocktags . b:tagend
-  let pnb_blockend   = pnb =~# b:tagstart . 'end' . b:blocktags . b:tagend
-  let pnb_blockmid   = pnb =~# b:tagstart . b:midtags . b:tagend
+  let pnb_blockstart = pnb =~# s:tagstart . s:blocktags . s:tagend
+  let pnb_blockend   = pnb =~# s:tagstart . 'end' . s:blocktags . s:tagend
+  let pnb_blockmid   = pnb =~# s:tagstart . s:midtags . s:tagend
 
-  let cur_blockstart = cur =~# b:tagstart . b:blocktags . b:tagend
-  let cur_blockend   = cur =~# b:tagstart . 'end' . b:blocktags . b:tagend
-  let cur_blockmid   = cur =~# b:tagstart . b:midtags . b:tagend
+  let cur_blockstart = cur =~# s:tagstart . s:blocktags . s:tagend
+  let cur_blockend   = cur =~# s:tagstart . 'end' . s:blocktags . s:tagend
+  let cur_blockmid   = cur =~# s:tagstart . s:midtags . s:tagend
 
   if pnb_blockstart && !pnb_blockend
     let ind = ind + &sw
