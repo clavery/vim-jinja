@@ -1,3 +1,6 @@
+NOTE: This fork changes the indent logic quite a bit. I created it to
+work with my particular set of plugins. It may not work for you.
+
 Jinja for Vim
 -------------
 
