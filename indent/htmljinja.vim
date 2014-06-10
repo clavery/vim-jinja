@@ -31,11 +31,11 @@ let b:blocktags = '\(block\|for\|if\|with\|autoescape\|filter\|trans\|macro\|set
 let b:midtags = '\(else\|elif\|pluralize\)'
 
 
-function! IndentLevel(lnum)
+function! s:IndentLevel(lnum)
   return indent(a:lnum)
 endfunction
 
-function! GetMatchingStartTagLevel(lnum)
+function! s:GetMatchingStartTagLevel(lnum)
   let curline = getline(a:lnum)
 
   let start_tag_check = matchlist(curline, b:tagstart . '\(end' . b:blocktags . '\)' . b:tagend)
@@ -79,7 +79,7 @@ function! GetMatchingStartTagLevel(lnum)
     endif
 
     if start_tag_found && num_end_tags == 0
-      return IndentLevel(tlnum)
+      return s:IndentLevel(tlnum)
     endif
     let tlnum = tlnum - 1
   endwhile
@@ -117,9 +117,9 @@ function! GetJinjaIndent(...)
   endif
 
   if cur_blockend && !cur_blockstart
-    let ind = GetMatchingStartTagLevel(v:lnum)
+    let ind = s:GetMatchingStartTagLevel(v:lnum)
   elseif cur_blockmid
-    let ind = GetMatchingStartTagLevel(v:lnum)
+    let ind = s:GetMatchingStartTagLevel(v:lnum)
   endif
 
   return ind
